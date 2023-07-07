@@ -1,8 +1,16 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
-const client = new ApolloClient({
-  uri: "https://flyby-router-demo.herokuapp.com/",
+// export const client1 = new ApolloClient({
+//   uri: "https://flyby-router-demo.herokuapp.com/",
+//   cache: new InMemoryCache(),
+// });
+
+
+
+export const client = new ApolloClient({
+  uri: "https://countries.trevorblades.com/graphql",
   cache: new InMemoryCache(),
 });
 
-export default client;
+
+

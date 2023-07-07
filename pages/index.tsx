@@ -1,23 +1,47 @@
 import Head from "next/head";
 import { gql } from "@apollo/client";
-import client from "@/lib/apollo-client";
 import Image from "next/image";
+import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
+import SelectBar from "./Select";
+import Getdoog from "./Getdoog";
 
 export default function Home() {
-  const GET_LOCATION = gql`
-    query GetLocations {
-      locations {
-        id
+  const [country_code, setcountry_code] = useState("IN");
+
+  function setcode(value: any) {
+    setcountry_code(value);
+  }
+  // const GET_LOCATION = gql`
+  //   query GetLocations {
+  //     locations {
+  //       id
+  //       name
+  //       description
+  //       photo
+  //     }
+  //   }
+  // `;
+  const GET_COUNTRY = gql`
+    query Query {
+      country(code: "${country_code}") {
         name
-        description
-        photo
+        native
+        capital
+        emoji
+        currency
+        languages {
+          code
+          name
+        }
       }
     }
   `;
-  const { loading, error, data } = useQuery(GET_LOCATION);
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
+  const { loading: load, error: er, data: dt } = useQuery(GET_COUNTRY);
+  console.log(dt);
+
+  if (load) return "Loading...";
+  if (er) return `Error! ${er.message}`;
   return (
     <>
       <Head>
@@ -27,43 +51,25 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <SelectBar setcode={setcode} />
+        <p className="title">selected country code : {country_code}</p>
         <div className="card-container">
-          {data.locations.map((location: any) => (
-            <div className="card" key={location.id}>
-              <p className="title">{location.name}</p>
-              <p className="desc">{location.description.slice(0, 200)}...</p>
-              <Image
-                src={`${location.photo}`}
-                width={50}
-                height={50}
-                alt="photo"
-                unoptimized
-                className="photo"
-              />
-            </div>
-          ))}
+          <div className="card">
+            <p className="title">{dt?.country?.capital}</p>
+            {dt.country.languages.map((languages: any) => {
+              return (
+                <>
+                  <p className="desc">{languages.__typename}</p>
+                  <p className="desc">{languages.name}</p>
+                  <p className="desc">{languages.code}</p>
+                </>
+              );
+            })}
+          </div>
         </div>
+
+        {/* <Getdoog /> */}
       </main>
     </>
   );
 }
-// SSR
-// export async function getStaticProps() {
-//   const { data } = await client.query({
-//     query: gql`
-//       query GetLocations {
-//         locations {
-//           id
-//           name
-//           description
-//           photo
-//         }
-//       }
-//     `,
-//   });
-//   return {
-//     props: {
-//       nextLocation: data.locations,
-//     },
-//   };
-// }

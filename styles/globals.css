@@ -134,3 +134,10 @@ a {
   object-fit: cover;
   border-radius: var(--border-radius);
 }
+p{
+  margin: 10px 20px;
+}
+.selectbar{
+  margin: 10px 20px;
+  width: 300px;
+}
